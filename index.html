@@ -1,6 +1,3 @@
-<title>Geodesic Y</title>
-<link rel="icon" href="logo.png">
-
 <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
 <link rel="stylesheet" href="src/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -25,27 +22,31 @@
         <br>
         <br>
 
-        <select id="player1Type" onchange="updateSelect(this)">
+        <select id="player1Type" class="button" onchange="updateSelect(this)">
             <option value="human">Human</option>
-            <option value="random">Random (AI)</option>
-            <option value="negamax">Minimax (AI)</option>
-            <option value="montecarlo">MCTS (AI)</option>
+            <option value="random">Random</option>
+            <option value="negamax">Minimax</option>
+            <option value="montecarlo">MCTS</option>
         </select>
         <br>
         <br>
 
-        <select id="player1Level" style="visibility: hidden;">
+        <select id="player1Level" class="button" style="visibility: hidden;">
             <option>1</option>
             <option>2</option>
             <option>3</option>
+            <option>4</option>
+            <option>5</option>
         </select>
     </div>
 
     <div class="middle">
         <br>
         <br>
+        <br>
 
         <span><b>Type</b></span>
+        <br>
         <br>
         <br>
     
@@ -57,7 +58,7 @@
         <span><b>Board Size</b></span>
         <br>
         <br>
-        <select id="boardSize">
+        <select id="boardSize" class="button" onchange="updateLevels()">
             <option>3</option>
             <option>4</option>
             <option>5</option>
@@ -71,26 +72,28 @@
         <br>
         <br>
 
-        <button id="play" onclick="startGame()">Play</button>
+        <button id="play" class="button" onclick="startGame()">Play</button>
     </div>
     <div class="right">
         <span><b>Player 2</b></span>
         <br>
         <br>
 
-        <select id="player2Type" onchange="updateSelect(this)">
+        <select id="player2Type" class="button" onchange="updateSelect(this)">
             <option value="human">Human</option>
-            <option value="random">Random (AI)</option>
-            <option value="negamax">Minimax (AI)</option>
-            <option value="montecarlo">MCTS (AI)</option>
+            <option value="random">Random</option>
+            <option value="negamax">Minimax</option>
+            <option value="montecarlo">MCTS</option>
         </select>
         <br>
         <br>
 
-        <select id="player2Level" style="visibility: hidden;">
+        <select id="player2Level" class="button" style="visibility: hidden;">
             <option>1</option>
             <option>2</option>
             <option>3</option>
+            <option>4</option>
+            <option>5</option>
         </select>
     </div>
 </div>
