@@ -3,7 +3,7 @@ function getCoords(n) {
     let params = [];
     
     for (let i = 0; i < n; i++) {
-        params.push([i + 1, 20 + (i * 80), 15 + (i * 40)]);
+        params.push([i + 1, 20 + (i * 40), 32 + (i * 40)]);
     }
 
     let angles = [210, 90, 330];
@@ -34,6 +34,17 @@ function getCoords(n) {
             }            
         }
     }
+
+    let max = 0;
+    for (let cord of cords) {
+        if (max < Math.abs(cord[1])) max = Math.abs(cord[1]);
+    }
+    console.log(max);
+    for (let cord of cords) {
+        cord[0] = cord[0] / max * 300;
+        cord[1] = cord[1] / max * 300;
+    }
+
     return cords;
 }
 

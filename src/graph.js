@@ -110,4 +110,3 @@ function getEdge(x, depth) {
     return edge;
 }
 
-

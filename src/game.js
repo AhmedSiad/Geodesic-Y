@@ -21,7 +21,7 @@ class Game {
             this.wMoves.push(location);
             newStone.color = "white";
         }
-
+        if (this.legalMoves.length == 0) console.log("bruh moment");
         this.legalMoves.splice(this.legalMoves.indexOf(location), 1);
 
         for (let i of newStone.neighbors) {

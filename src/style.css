@@ -11,12 +11,13 @@
 body {
     font-family: "PressStart2P", cursive;
 }
+
 .container {
     width: 100%;
 }
 
 .left, .right {
-    width: 42%;
+    width: 40%;
     float: left;
     margin-right: 1%;
     margin-left: 1%;
@@ -24,7 +25,7 @@ body {
 
 .middle {
     text-align: center;
-    width: 6%;
+    width: 10%;
     float: left;
 }
 
@@ -50,4 +51,13 @@ select {
 
 #boardSize {
     width: 40%;
+}
+
+.button {
+    width: 130px;
+    height: 40px;
+    color: #006699;
+    font-family: 'PressStart2P';
+    font-size: 13px;
+    padding-left: 5px;
 }

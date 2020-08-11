@@ -1,6 +1,6 @@
-let n = 5;
+let n = 3;
 
-const rulesText = "Two players, black and white, take turns placing each of their respective colored stones on the board. Once a player has formed a path that connects all three sides of the board (top, left, right), that player wins the game."
+const rulesText = "Two players, black and white, take turns placing each of their respective colored stones on the board. Once a player has formed a path that connects all three sides of the board (bottom, left, right), that player wins the game."
 
 let coords = getCoordinates(n);
 let polygons = coords.polygons;
@@ -9,8 +9,8 @@ let centers = coords.centers;
 let g = generateNSizedGraph(n);
 let gm = new Game(g);
 
-let bAgent = new Agent("black", "random");
-let wAgent = new Agent("white", "negamax");
+let bAgent = new Agent("black", "montecarlo");
+let wAgent = new Agent("white", "random");
 
 let games = 0;
 let wins = { black: 0, white: 0 };
@@ -44,11 +44,11 @@ let finalDecision = null;
 let winningPath = [];
 
 function setup() {
-    let cnv = createCanvas(windowWidth - 100, windowHeight - 300);
+    let cnv = createCanvas(windowWidth - 100, windowHeight - 400);
     cnv.parent("container");
     cnv.style("display", "block");
 
-    frameRate(60);
+    frameRate(30);
 }
 
 function draw() {
@@ -71,8 +71,22 @@ function startGame() {
     let ptb = document.getElementById("player1Type").value;
     let ptw = document.getElementById("player2Type").value;
 
-    bAgent = new Agent("black", ptb);
-    wAgent = new Agent("white", ptw);
+    let ptblevel = parseInt(document.getElementById("player1Level").value);
+    let ptwlevel = parseInt(document.getElementById("player2Level").value);
+
+    if (ptb == "negamax") {
+        if (baseSize > 5) ptblevel = (ptblevel > 4 ? 4 : ptblevel);
+        if (baseSize > 6) ptblevel = (ptblevel > 3 ? 3 : ptblevel);
+        if (baseSize > 10) ptblevel = (ptblevel > 2 ? 2 : ptblevel);
+    }
+    if (ptw == "negamax") {
+        if (baseSize > 5) ptwlevel = (ptwlevel > 4 ? 4 : ptwlevel);
+        if (baseSize > 6) ptwlevel = (ptwlevel > 3 ? 3 : ptwlevel);
+        if (baseSize > 10) ptwlevel = (ptwlevel > 2 ? 2 : ptwlevel);
+    }
+
+    bAgent = new Agent("black", ptb, ptblevel);
+    wAgent = new Agent("white", ptw, ptwlevel);
 
     document.getElementById("play").style.visibility = "hidden";
 
@@ -87,10 +101,10 @@ function titleScreen() {
     textSize(48);
     textAlign(CENTER);
     textFont("PressStart2P");
-    text("Welcome to Geodesic Y!", width / 2, height / 2 - 100);
+    text("Welcome to Geodesic Y!", width / 2, height / 2 - 200);
 
     textSize(40);
-    text("Rules:", width / 2, height / 2);
+    text("Rules:", width / 2, height / 2 - 100);
 
     textSize(16);
     rectMode(CENTER);
@@ -101,31 +115,6 @@ function titleScreen() {
 }
 
 function update() {
-    for (let poly of polygons) {
-        push();
-        translate(width / 2, height / 2);
-        strokeWeight(5);
-
-        let index = polygons.indexOf(poly);
-        let c;
-        if (gm.nodes[index].color == "black") c = color(255, 0, 0);
-        else if (gm.nodes[index].color == "white") c = color(0, 255, 0);
-        else c = color(255);
-
-        if (winningPath.includes(index)) {
-            c.setAlpha(150);
-        }
-
-        fill(c);
-        beginShape();
-        for (let i = 0; i < poly.length; i++) {
-            vertex(poly[i][0], poly[i][1]);
-        }
-        endShape(CLOSE);
-        pop();
-    }
-
-
     if (!gameFinished) {
         if (finalDecision != null) {
             gm.processMove(finalDecision, turn);
@@ -137,6 +126,7 @@ function update() {
                     if (nd.color != gm.nodes[finalDecision].color) continue;
                     if (gm.findRoot(nd).id == finalDecision) winningPath.push(nd.id);
                 }
+                return;
             }
 
             turn = (turn == "black" ? "white" : "black");
@@ -146,6 +136,58 @@ function update() {
             if (turn == "black") finalDecision = bAgent.decisionFunction(gm);
             else finalDecision = wAgent.decisionFunction(gm);
         }
+        fill(0, 102, 153);
+        textSize(16);
+        text("Press backspace to go back.", width / 2, height - 30);
+    }
+    else {
+        let winner = gm.findWinner(finalDecision);
+        winner = winner.charAt(0).toUpperCase() + winner.substring(1);
+        fill(0, 102, 153);
+        textSize(16);
+        text(winner + " has won the game! Press any key to go back to title menu.", width / 2, height - 30);
+    }
+
+    for (let poly of polygons) {
+        let index = polygons.indexOf(poly);
+        if (winningPath.includes(index)) continue;
+        push();
+        translate(width / 2, height / 2);
+        strokeWeight(5);
+
+        let c;
+        if (gm.nodes[index].color == "black") c = color(80);
+        else if (gm.nodes[index].color == "white") c = color(255);
+        else c = color(200);
+
+        fill(c);
+        beginShape();
+        for (let i = 0; i < poly.length; i++) {
+            vertex(poly[i][0], poly[i][1]);
+        }
+        endShape(CLOSE);
+        pop();
+    }
+
+    for (let w of winningPath) {
+        let poly = polygons[w];
+        push();
+        translate(width / 2, height / 2);
+        strokeWeight(5);
+        stroke(0, 102, 153);
+
+        let c;
+        if (gm.nodes[w].color == "black") c = color(80);
+        else if (gm.nodes[w].color == "white") c = color(255);
+        else c = color(200);
+
+        fill(c);
+        beginShape();
+        for (let i = 0; i < poly.length; i++) {
+            vertex(poly[i][0], poly[i][1]);
+        }
+        endShape(CLOSE);
+        pop(); 
     }
 }
 
@@ -167,7 +209,7 @@ function mousePressed() {
 }
 
 function keyPressed() {
-    if (gameFinished) {
+    if (gameFinished || gamePlaying && keyCode == BACKSPACE) {
         gamePlaying = false;
         gameFinished = false;
         document.getElementById("play").style.visibility = "visible";
@@ -176,7 +218,7 @@ function keyPressed() {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth - 100, windowHeight - 300);
+    resizeCanvas(windowWidth - 100, windowHeight - 400);
 }
 
 
@@ -198,4 +240,8 @@ function updateSelect(element) {
             document.getElementById("player2Level").style.visibility = "hidden";
         }
     }
+}
+
+function updateLevels(element) {
+
 }

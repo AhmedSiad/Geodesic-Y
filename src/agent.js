@@ -1,5 +1,5 @@
 class Agent {
-    constructor(color, type) {
+    constructor(color, type, level = 1) {
         this.color = color;
         this.type = type;
 
@@ -10,8 +10,8 @@ class Agent {
         if (type == "montecarlo") this.decisionFunction = this.mcts;
 
 
-        this.maxDepth = 4;
-        this.maxTrials = 1000;
+        this.maxDepth = 1 + level;
+        this.maxTrials = 1000 * level;
         this.expC = 1;
 
         this.root = null;
@@ -71,10 +71,10 @@ class Agent {
     }
 
     mcts(gameState) {
-        //let root = new MCTSNode(gameState.copy(), this.color, null, null);
-        //root.expand_node()
+        let root = new MCTSNode(gameState.copy(), this.color, null, null);
+        root.expand_node()
 
-        if (this.root == null) {
+        /*if (this.root == null) {
             this.root = new MCTSNode(gameState.copy(), this.color, null, null);
             this.root.expand_node();
         }
@@ -84,12 +84,12 @@ class Agent {
             else lastMove = gameState.bMoves[gameState.bMoves.length - 1];
             let ch = this.root.children.filter((c) => c.move == lastMove)[0];
             this.root = ch;
-        }
+        }*/
 
         let trials = 0;
         while (trials < this.maxTrials) {
             // SELECTION + EXPANSION
-            let pick = this.root;
+            let pick = root; //this.root
             while (pick.children.length > 0) {
                 let bestScore = 0;
                 let bestChild = pick.children[0];
@@ -128,16 +128,16 @@ class Agent {
 
         let bestWinPercentage = 0;
         let bestMove = gameState.legalMoves[0];
-        for (let child of this.root.children) {
+        for (let child of root.children) {
             let winpercent = (child.trials == 0 ? 0 : child.wins / child.trials);
             //console.log(child.wins, child.trials);
             if (winpercent > bestWinPercentage) {
                 bestMove = child.move;
                 bestWinPercentage = winpercent;
-                this.root = child;
+                //this.root = child;
             }
         }
-        this.root.parent = null;
+        //this.root.parent = null;
         return bestMove;
     }
 }
